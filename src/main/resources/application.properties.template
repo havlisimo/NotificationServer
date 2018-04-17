@@ -1,0 +1,21 @@
+# Application config
+#
+# For all Spring configuration directives see
+# http://docs.spring.io/spring-boot/docs/1.1.6.RELEASE/reference/htmlsingle/#common-application-properties
+
+# APPLICATION SETTINGS
+spring.main.show-banner=false
+
+# IDENTITY
+application.name=Notification server
+
+# LOGGING
+logging.level.org.springframework.web=DEBUG
+logging.level.org.springframework.hibernate=DEBUG
+
+# EMBEDDED SERVER CONFIGURATION
+server.port=8080
+
+notification_server.db.url=jdbc:postgresql://localhost:5432/test
+notification_server.db.user=postgres
+notification_server.db.password=...

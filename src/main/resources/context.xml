@@ -7,6 +7,9 @@
 
     <context:annotation-config/>
 
+    <import resource="database.xml"/>
+    <import resource="service.xml"/>
+
     <context:component-scan base-package="cz.cvut.fit.havlito4.notification_server.controller"/>
 
 </beans>
