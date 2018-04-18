@@ -8,6 +8,9 @@ import javax.persistence.Id;
 @Entity
 public class TokenEntity {
 
+    public static final String TYPE_ANDROID = "ANDROID";
+    public static final String TYPE_IOS = "IOS";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tokenId;

@@ -5,6 +5,7 @@
 
    <bean class="cz.cvut.fit.havlito4.notification_server.service.impl.TestServiceImpl"/>
    <bean class="cz.cvut.fit.havlito4.notification_server.service.impl.TokenServiceImpl"/>
+   <bean class="cz.cvut.fit.havlito4.notification_server.service.impl.NotificationServiceImpl"/>
    <bean class="org.springframework.web.client.RestTemplate"/>
 
 </beans>

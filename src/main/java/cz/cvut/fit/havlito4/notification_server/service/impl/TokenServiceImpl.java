@@ -24,8 +24,6 @@ public class TokenServiceImpl implements TokenService {
     @Autowired
     private HibernateCriteriaCreator hibernateCriteriaCreator;
 
-    @Autowired
-    private RestOperations restOperations;
 
     @Override
     @Transactional
