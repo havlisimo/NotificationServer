@@ -11,3 +11,10 @@ VALUES ('AHOJ'),
   ('test'),
   ('test'),
   ('test');
+
+create table token (
+  token_id        BIGSERIAL PRIMARY KEY                                   NOT NULL,
+  user_id         TEXT                                                    NOT NULL,
+  token           TEXT                                                    NOT NULL,
+  token_type       TEXT                                                    NOT NULL
+);

@@ -7,6 +7,8 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestOperations;
+import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,6 +21,9 @@ public class TestServiceImpl implements TestService {
 
     @Autowired
     private HibernateCriteriaCreator hibernateCriteriaCreator;
+
+    @Autowired
+    private RestOperations restOperations;
 
     @Override
     public void test() {
@@ -36,5 +41,7 @@ public class TestServiceImpl implements TestService {
         System.out.println(list.size());
 
         System.out.println(testEntity);
+
+        //restOperations.exchange()
     }
 }
