@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
 
 @RestController
 @RequestMapping(value = "/token", produces = "application/json")
@@ -16,15 +17,31 @@ public class TokenController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity registerToken(@RequestBody TokenRequest body)  {
-        tokenService.registerToken(body);
+    public ResponseEntity registerToken(@RequestHeader("Authorization") String oauthToken, @RequestBody TokenRequest body)  {
+        if (oauthToken==null || !oauthToken.startsWith("Bearer ")) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        oauthToken = oauthToken.replace("Bearer ", "");
+        try {
+            tokenService.registerToken(oauthToken, body);
+        } catch (HttpStatusCodeException ex) {
+            return new ResponseEntity(HttpStatus.valueOf(ex.getStatusCode().value()));
+        }
         return new ResponseEntity<>("{}", HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity deleteToken(@RequestBody TokenRequest token)  {
-        tokenService.deleteToken(token);
+    public ResponseEntity deleteToken(@RequestHeader("Authorization") String oauthToken, @RequestBody TokenRequest token)  {
+        if (oauthToken==null || !oauthToken.startsWith("Bearer ")) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        oauthToken = oauthToken.replace("Bearer ", "");
+        try {
+            tokenService.deleteToken(oauthToken, token);
+        } catch (HttpStatusCodeException ex) {
+            return new ResponseEntity(HttpStatus.valueOf(ex.getStatusCode().value()));
+        }
         return new ResponseEntity<>("{}", HttpStatus.ACCEPTED);
     }
 }

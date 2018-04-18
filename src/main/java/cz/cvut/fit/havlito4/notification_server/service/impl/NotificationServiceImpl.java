@@ -31,7 +31,6 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void sendNotification(NotificationRequest notificationRequest) {
-        System.out.println("sendNotification " + notificationRequest);
         List<TokenEntity> receiverTokens = getTokens(notificationRequest.getReceiverId());
 
         sendNotificationAndroid(notificationRequest, receiverTokens.stream().filter(tokenEntity -> tokenEntity.getTokenType().equals(TokenEntity.TYPE_ANDROID)).collect(Collectors.toList()));
@@ -45,10 +44,8 @@ public class NotificationServiceImpl implements NotificationService {
             FirebaseRequest requestBody = new FirebaseRequest();
             requestBody.setTo(entity.getToken());
             requestBody.setData(new FirebaseRequestData(notificationRequest.getNotidficationId(), notificationRequest.getType()));
-            System.out.println("requestBody " + requestBody);
             HttpEntity request = new HttpEntity<>(requestBody, headers);
             ResponseEntity<String> response = restOperations.postForEntity(url, request, String.class);
-            System.out.println(response);
         }
     }
 

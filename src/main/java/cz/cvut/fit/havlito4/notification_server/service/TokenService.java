@@ -4,7 +4,7 @@ import cz.cvut.fit.havlito4.notification_server.controller.entity.TokenRequest;
 
 public interface TokenService {
 
-    void registerToken(TokenRequest body);
+    void registerToken(String oauthToken, TokenRequest body);
 
-    void deleteToken(TokenRequest token);
+    void deleteToken(String oauthToken, TokenRequest token);
 }

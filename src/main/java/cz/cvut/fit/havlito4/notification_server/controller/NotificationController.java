@@ -17,7 +17,7 @@ public class NotificationController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity registerToken(@RequestBody NotificationRequest body)  {
+    public ResponseEntity sendNotification(@RequestBody NotificationRequest body)  {
         notificationService.sendNotification(body);
 
         return new ResponseEntity<>("{}", HttpStatus.ACCEPTED);
