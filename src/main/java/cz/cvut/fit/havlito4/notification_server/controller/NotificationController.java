@@ -12,12 +12,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/notification", produces = "application/json")
 public class NotificationController {
 
+    private static final String classificationAuthCode = "abc";
+
     @Autowired
     private NotificationService notificationService;
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity sendNotification(@RequestBody NotificationRequest body)  {
+    public ResponseEntity sendNotification(@RequestHeader("Authorization") String authorization, @RequestBody NotificationRequest body)  {
+
+        if (!("Bearer " + classificationAuthCode).equals(authorization)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         notificationService.sendNotification(body);
 
         return new ResponseEntity<>("{}", HttpStatus.ACCEPTED);
