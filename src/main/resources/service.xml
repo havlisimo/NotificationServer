@@ -3,7 +3,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
-   <bean class="cz.cvut.fit.havlito4.notification_server.service.impl.TestServiceImpl"/>
    <bean class="cz.cvut.fit.havlito4.notification_server.service.impl.TokenServiceImpl"/>
    <bean class="cz.cvut.fit.havlito4.notification_server.service.impl.NotificationServiceImpl"/>
    <bean class="org.springframework.web.client.RestTemplate"/>
