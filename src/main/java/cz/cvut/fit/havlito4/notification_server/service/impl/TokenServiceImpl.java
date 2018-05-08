@@ -46,6 +46,15 @@ public class TokenServiceImpl implements TokenService {
         }
 
         String userId = getUserId(oauthToken);
+
+        final Criteria criteria = hibernateCriteriaCreator.createCriteria(TokenEntity.class, "token");
+        criteria.add(Restrictions.eq("token.token", token));
+        criteria.add(Restrictions.eq("token.tokenType", type));
+        final List<TokenEntity> list = criteria.list();
+        for (TokenEntity entity : list) {
+            entityManager.remove(entity);
+        }
+
         TokenEntity entity = new TokenEntity();
         entity.setUserId(userId);
         entity.setToken(token);
