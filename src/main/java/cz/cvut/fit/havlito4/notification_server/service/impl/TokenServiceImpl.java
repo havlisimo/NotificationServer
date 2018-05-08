@@ -7,17 +7,16 @@ import cz.cvut.fit.havlito4.notification_server.service.TokenService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestOperations;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
+import java.util.*;
 
 public class TokenServiceImpl implements TokenService {
 
@@ -30,27 +29,40 @@ public class TokenServiceImpl implements TokenService {
     @Autowired
     private RestOperations restOperations;
 
+    @Resource
+    private Set<String> tokenTypes;
+
+    @Value("${notification_server.appserver.url}")
+    private String appServerUrl;
+
     @Override
     @Transactional
     public void registerToken(String oauthToken, TokenRequest body) {
+        String token = body.getToken();
+        String type = body.getType();
+
+        if (token ==null || type == null || token.isEmpty() || !tokenTypes.contains(type)) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
+
         String userId = getUserId(oauthToken);
         TokenEntity entity = new TokenEntity();
         entity.setUserId(userId);
-        entity.setToken(body.getToken());
-        entity.setTokenType(body.getType());
+        entity.setToken(token);
+        entity.setTokenType(type);
         entityManager.persist(entity);
     }
 
     private String getUserId(String oauthToken) {
 
-        String url = "https://rozvoj.fit.cvut.cz/evolution-dev/classification-dev/api/v1/public/user-info";
+        String url = appServerUrl + "public/user-info";
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + oauthToken);
         HttpEntity request = new HttpEntity<>(headers);
         ResponseEntity<String> response = restOperations.exchange(url, HttpMethod.GET, request, String.class);
         if (response.getStatusCode().is2xxSuccessful()) {
             //TODO get user id from response
-            return "havlito4";
+            return "TODO";
         } else {
             throw new HttpClientErrorException(response.getStatusCode());
         }
@@ -59,13 +71,23 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     @Transactional
-    public void deleteToken(String oauthToken, TokenRequest token) {
+    public void deleteToken(String oauthToken, TokenRequest body) {
+        String token = body.getToken();
+        String type = body.getType();
+
+        if (token ==null || type == null || token.isEmpty() || !tokenTypes.contains(type)) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
+
         String userId = getUserId(oauthToken);
         final Criteria criteria = hibernateCriteriaCreator.createCriteria(TokenEntity.class, "token");
         criteria.add(Restrictions.eq("token.userId", userId));
-        criteria.add(Restrictions.eq("token.token", token.getToken()));
-        criteria.add(Restrictions.eq("token.tokenType", token.getType()));
+        criteria.add(Restrictions.eq("token.token", token));
+        criteria.add(Restrictions.eq("token.tokenType", type));
         final List<TokenEntity> list = criteria.list();
+        if (list.isEmpty()) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+        }
         for (TokenEntity entity : list) {
             entityManager.remove(entity);
         }

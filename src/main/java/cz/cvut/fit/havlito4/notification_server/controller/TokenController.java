@@ -3,13 +3,14 @@ package cz.cvut.fit.havlito4.notification_server.controller;
 import cz.cvut.fit.havlito4.notification_server.controller.entity.TokenRequest;
 import cz.cvut.fit.havlito4.notification_server.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpStatusCodeException;
 
 @RestController
-@RequestMapping(value = "/token", produces = "application/json")
+@RequestMapping(value = "/token")
 public class TokenController {
 
     @Autowired
@@ -27,7 +28,7 @@ public class TokenController {
         } catch (HttpStatusCodeException ex) {
             return new ResponseEntity(HttpStatus.valueOf(ex.getStatusCode().value()));
         }
-        return new ResponseEntity<>("{}", HttpStatus.CREATED);
+        return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
@@ -42,6 +43,6 @@ public class TokenController {
         } catch (HttpStatusCodeException ex) {
             return new ResponseEntity(HttpStatus.valueOf(ex.getStatusCode().value()));
         }
-        return new ResponseEntity<>("{}", HttpStatus.ACCEPTED);
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 }
