@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestOperations;
 
 import java.util.List;
@@ -31,8 +33,16 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void sendNotification(NotificationRequest notificationRequest) {
-        List<TokenEntity> receiverTokens = getTokens(notificationRequest.getReceiverId());
+        final String receiverId = notificationRequest.getReceiverId();
+        final String notificationId = notificationRequest.getNotidficationId();
+        if (receiverId == null || receiverId.isEmpty() || notificationId == null || notificationId.isEmpty()) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
 
+        List<TokenEntity> receiverTokens = getTokens(receiverId);
+        if (receiverTokens.isEmpty()) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+        }
         sendNotificationAndroid(notificationRequest, receiverTokens.stream().filter(tokenEntity -> tokenEntity.getTokenType().equals(TokenEntity.TYPE_ANDROID)).collect(Collectors.toList()));
     }
 

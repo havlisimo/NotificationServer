@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
 
 @RestController
 @RequestMapping(value = "/notification", produces = "application/json")
@@ -27,8 +28,28 @@ public class NotificationController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        notificationService.sendNotification(body);
+        try {
+            notificationService.sendNotification(body);
+        } catch (HttpStatusCodeException ex) {
+            return new ResponseEntity(HttpStatus.valueOf(ex.getStatusCode().value()));
+        }
+        return new ResponseEntity<>("", HttpStatus.ACCEPTED);
+    }
 
-        return new ResponseEntity<>("{}", HttpStatus.ACCEPTED);
+
+    @RequestMapping(method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity deleteNotification(@RequestHeader("Authorization") String authorization, @RequestBody NotificationRequest body)  {
+
+        if (!("Bearer " + classificationAuthCode).equals(authorization)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        body.setType("Hidden");
+        try {
+            notificationService.sendNotification(body);
+        } catch (HttpStatusCodeException ex) {
+            return new ResponseEntity(HttpStatus.valueOf(ex.getStatusCode().value()));
+        }
+        return new ResponseEntity<>("", HttpStatus.ACCEPTED);
     }
 }
